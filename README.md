@@ -21,11 +21,17 @@ Our best model achieved:
 ## 🗂️ Project Structure
 
 ├── data/ # Preprocessed RAVDESS dataset
+
 ├── models/ # PyTorch models and architecture definitions
+
 ├── utils/ # Preprocessing, dataloaders, and utilities
+
 ├── experiments/ # Training scripts and result logs
+
 ├── notebooks/ # Exploratory analysis and visualizations
+
 ├── results/ # Output metrics and model predictions
+
 └── README.md # Project documentation
 
 
@@ -110,17 +116,6 @@ _(See full list in [CV_Final_Report.pdf](./CV_Final_Report.pdf))_
 - Expand to larger datasets (IEMOCAP, CREMA-D)
 - Explore **graph-based fusion** or **temporal transformers**
 - Real-time deployment in adaptive user interfaces
-
----
-
-## 🤝 Contributions
-
-If you find this work useful or want to contribute:
-
-- 🌟 Star the repo
-- 🍴 Fork it
-- 🛠️ Submit a pull request
-- 📬 Open an issue with suggestions or questions
 
 ---
 
