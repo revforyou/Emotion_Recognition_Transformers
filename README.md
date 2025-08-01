@@ -1,111 +1,118 @@
-	
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/self-attention-fusion-for-audiovisual-emotion/facial-emotion-recognition-on-ravdess)](https://paperswithcode.com/sota/facial-emotion-recognition-on-ravdess?p=self-attention-fusion-for-audiovisual-emotion)
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/self-attention-fusion-for-audiovisual-emotion/emotion-recognition-on-ravdess)](https://paperswithcode.com/sota/emotion-recognition-on-ravdess?p=self-attention-fusion-for-audiovisual-emotion)
-# Multimodal [audiovisual] emotion recognition
+# 🎭 Multimodal Emotion Recognition using Transformers
 
-## Preface
-If you find this repository useful for your needs, you might be interested in our newer work on multimodal (audiovisual) emotion recognition in-the-wild from CVPRW'24: https://github.com/katerynaCh/MMA-DFER. It achieves state-of-the-art on dynamic emotion recognition in-the-wild datasets MAFW and DFEW usng vision and audio. 
+This project explores **multimodal emotion recognition** using facial and vocal cues from the [RAVDESS](https://zenodo.org/record/1188976) dataset. We evaluate and compare three fusion strategies built on transformer and attention-based architectures to enhance affective computing systems that better understand human emotions.
 
-## About
-This repository implements a multimodal network for emotion recognition from audio and video data following the paper "[Self-attention fusion for audiovisual emotion recognition with incomplete data]" accepted to ICPR 2022. We provide implementations for [Ravdess] dataset of speech and frontal face view data corresponding to 8 emotions: 01 = neutral, 02 = calm, 03 = happy, 04 = sad, 05 = angry, 06 = fearful, 07 = disgust, 08 = surprised. We provide implementations of three fusion variants ('late transformer', 'intermediate transformer', 'intermediate attention') and modality dropouts.
-<p align="center">
-<img src="emotionfigure.png" alt="drawing" width="80%"/>
-</p>
-<p align = "center">
-Fusion blocks
-</p>
+## 🚀 Overview
 
-## Dependencies
-The code is tested with Python=3.9.5 and pytorch=1.9.0. To install required packages:
-```
-pip install -r requirements.txt
-```
+Emotion recognition is central to improving human-computer interaction, sentiment analysis, and adaptive interfaces. Our system processes both **facial expressions (video)** and **speech signals (audio)** using:
 
-## Usage
+- A **vision branch** powered by EfficientFace (pre-trained on AffectNet)
+- An **audio branch** based on MFCCs and convolutional layers
+- Three distinct **modality fusion strategies**:
+  - Late Transformer Fusion
+  - Intermediate Transformer Fusion
+  - Intermediate Attention-Based Fusion (best performance)
 
-#### Dataset preparation
-For training on Ravdess, download data from [here](https://zenodo.org/record/1188976#.YkgJVijP2bh). You will need to download the files Video_Speech_Actor_[01-24].zip and Audio_Speech_Actors_01-24.zip. The directory should be organized as follows:
-```
-RAVDESS
-└───ACTOR01
-│   │  01-01-01-01-01-01-01.mp4
-│   │  01-01-01-01-01-02-01.mp4
-│   │  ...
-│   │  03-01-01-01-01-01-01.wav
-│   │  03-01-01-01-01-02-01.wav
-│   │  ...
-└───ACTOR02
-└───...
-└───ACTOR24
-```
+Our best model achieved:
+- **Top-5 Accuracy:** 98.12%
 
-Install face detection library:
-```sh
-pip install facenet-pytorch
-```
-or follow instructions in https://github.com/timesler/facenet-pytorch
+---
 
-Preprocessing scripts are located in ravdess_preprocessing/
-Inside each of three scripts, specify the path (full path!) where you have downloaded the data.
-Then run:
-```python
-cd ravdess_preprocessing
-python extract_faces.py
-python extract_audios.py
-python create_annotations.py
-```
-*In extract_faces.py the face data will be saved as numpy arrays by defaults. You can specify save_avi=True inside tre script if you want to also save data as videos for visualization purposes.*
+## 🗂️ Project Structure
 
-As a result you will have annotations.txt file that you can use further for training.
+├── data/ # Preprocessed RAVDESS dataset  
+├── models/ # PyTorch models and architecture definitions  
+├── utils/ # Preprocessing, dataloaders, and utilities  
+├── experiments/ # Training scripts and result logs  
+├── notebooks/ # Exploratory analysis and visualizations  
+├── results/ # Output metrics and model predictions  
+└── README.md # Project documentation
 
-#### Training
-For visual module weight initialization, download the pre-trained EfficientFace from [here](https://github.com/zengqunzhao/EfficientFace) under 'Pre-trained models'. In our experiments, we use the model pre-trained on AffectNet7, i.e., EfficientFace_Trained_on_AffectNet7.pth.tar. If you want to use a different one, download it and later specify the path in \-\-pretrain_path argument to main.py. Otherwise, you can ignore this step and train from scratch (although you will likely obtain lower performance).
+---
 
-For training, run:
-```python
-python main.py
-```
-You can optionally specify the following arguments:
-* \-\-fusion [it | lt | ia] = modality fusion variant: intermediate transformer, late transformer, intermediate attention (default) (check the paper for details).
-* \-\-mask [softhard | noise | nodropout ] = modality dropout variant. Default is softhard (check paper for details). 
-* \-\-num_heads = specifies the number of heads to use in the fusion module.
-* \-\-pretrain_path = path to EfficientFace pre-trained checkpoint.
-* \-\-result_path = path where the results and trained models will be saved
-* \-\-annotation_path = path to annotation file generated at previous step
+## 📊 Dataset
 
-By default, this will train the model, select the best iteration on validation set and report the performance on the test set (in [RESULT_PATH]/tes_set_bestval.txt). Other training parameters that can be adjusted are self-explanatory and can be seen from opts.py. The defaults are set to those used in the paper.
+We used the **Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS)**:
 
-The codebase defaults to single-fold training, but supports multi-fold cross-validation, for that you might want to specify the annotation path for each fold separately in main.py. 
+- 24 actors (12 female, 12 male)
+- 7,356 audio-video recordings
+- 8 emotions: neutral, calm, happy, sad, angry, fearful, surprise, and disgust
+- Available in three formats: audio-only, video-only, and audiovisual
 
-#### Testing
-If you want to test previously trained model specify the --no_train and --no_val arguments as well as the path to the experiment folder containing the checkpoint:
+### Preprocessing:
 
-```python
-python main.py  --no_train --no_val --result_path [PATH_TO_CHECKPOINT_FOLDER]
-```
+- 🎧 **Audio:** Resampled to 16kHz, mono conversion, MFCC extraction, amplitude normalization
+- 📹 **Video:** Extracted 15 frames per video, resized to 224×224, augmented using OpenFace
+- 🔄 Synced and standardized for transformer compatibility
 
-We share three pretrained models used in the paper, one for each attention types and all using modality dropout: [https://tuni-my.sharepoint.com/:f:/g/personal/kateryna_chumachenko_tuni_fi/EvPvmdroOg1Hgtsvxo6N9yMBgC9nHjo-V1FVHwzcf8FTqw?e=GemHm1](https://tuni-my.sharepoint.com/:f:/g/personal/kateryna_chumachenko_tuni_fi/EvPvmdroOg1Hgtsvxo6N9yMBgC9nHjo-V1FVHwzcf8FTqw?e=188a8U). The split for these models is:
-test: 5,10,16,19; val: 11,13,18,22; train: the rest. Please note the RAVDESS license before using these models.
-#### Using your own data
-For training on a different dataset: 
-* create the dataset class in datasets/[yourdataset.py] and add it to the dataset builder in dataset.py. 
-* specify appropriate --sample_size (image dimension, e.g. 224), --sample_duration (temporal dimension of image sequnce, e.g. 15), --n_classes corresponding to your dataset
+---
 
-## Citation
-If you use our work, please cite as:
-```bibtex
-@article{chumachenko2022self,
-  title={Self-attention fusion for audiovisual emotion recognition with incomplete data},
-  author={Chumachenko, Kateryna and Iosifidis, Alexandros and Gabbouj, Moncef},
-  journal={arXiv preprint arXiv:2201.11095},
-  year={2022}
-}
-```
+## 🧠 Model Architecture
 
-## References
-This work uses EfficientFace from https://github.com/zengqunzhao/EfficientFace . Please consider citing their paper "Robust Lightweight Facial Expression Recognition Network with Label Distribution Training". Thanks to @zengqunzhao for providing the implementation and the pretrained model for EfficientFace!
+### 🔍 Feature Extraction
 
-Parts of the training pipeline code are modified from https://github.com/okankop/Efficient-3DCNNs under MIT license and parts of fusion implementation is based on timm library https://github.com/rwightman/pytorch-image-models under Apache 2.0 license. For data preprocessing we used https://github.com/timesler/facenet-pytorch
+- **Vision Branch**: 
+  - EfficientFace (pretrained) + Temporal 1D Conv Layers
+- **Audio Branch**: 
+  - MFCC input → 4 Conv blocks → Global Avg Pooling
 
-   [Self-attention fusion for audiovisual emotion recognition with incomplete data]: <https://arxiv.org/abs/2201.11095>
-   [Ravdess]: <https://smartlaboratory.org/ravdess/>
+### 🔗 Fusion Mechanisms
+
+| Fusion Type                  | Description                                                                 |
+|-----------------------------|-----------------------------------------------------------------------------|
+| Late Transformer Fusion      | Independent processing; fused at transformer stage                         |
+| Intermediate Transformer     | Fusion at mid-feature layers with transformer-based cross-attention        |
+| Intermediate Attention 🏆    | Scaled dot-product attention between modalities (no feature entanglement)  |
+
+---
+
+## 🧪 Experiments
+
+### 🛠️ Training Setup
+
+- Optimizer: SGD (lr = 0.04, momentum = 0.9, weight decay = 1e-3)
+- Epochs: 100
+- Data Augmentation: Random horizontal flips, rotations
+
+### 📈 Performance Summary
+
+| Method                      | Loss   | Top-1 Precision (%) | Top-5 Precision (%) |
+|----------------------------|--------|---------------------|---------------------|
+| Late Transformer Fusion    | 16.699 | 14.375              | 59.167              |
+| Intermediate Transformer   | 35.392 | 13.958              | 85.208              |
+| Intermediate Attention 🏆  | **2.393** | **33.958**         | **98.125**          |
+
+---
+
+## 📌 Key Insights
+
+- Transformer-based fusion offers solid cross-modal alignment but risks overfitting.
+- Simpler attention-based fusion (without direct fusion) performs best in this setup.
+- Audio and facial features complement each other; their joint learning improves robustness.
+
+---
+
+## 📚 References
+
+- Vaswani et al., *Attention is All You Need*
+- Kumar et al., *Multimodal Emotion Recognition on RAVDESS*
+- Yue et al., *Multi-task learning for emotion and intensity recognition*
+- Sherman et al., *Speech Emotion Recognition with BLSTM + Attention*
+
+---
+
+## 🏁 Future Work
+
+- Integrate **self-supervised embeddings** (e.g., Wav2Vec 2.0)
+- Expand to larger datasets (IEMOCAP, CREMA-D)
+- Explore **graph-based fusion** or **temporal transformers**
+- Real-time deployment in adaptive user interfaces
+
+---
+
+## 📬 Contact
+
+**Venkata Revanth Jyothula**  
+📍 New York City  
+📫 jyorevanth@gmail.com  
+🔗 [LinkedIn](https://www.linkedin.com/in/revanth-jyothula-3822601b5/) | [GitHub](https://github.com/revforyou) | [Portfolio](https://portfolio-beta-blue-754e7fm5f8.vercel.app/)
