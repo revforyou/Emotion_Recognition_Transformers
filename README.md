@@ -115,4 +115,3 @@ We used the **Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDES
 **Venkata Revanth Jyothula**  
 📍 New York City  
 📫 jyorevanth@gmail.com  
-🔗 [LinkedIn](https://www.linkedin.com/in/revanth-jyothula-3822601b5/) | [GitHub](https://github.com/revforyou) | [Portfolio](https://portfolio-beta-blue-754e7fm5f8.vercel.app/)
